@@ -37,7 +37,7 @@ export default {
             var data = {"email": email, "password": password}
             try{
              console.log(data)
-     
+             console.log(finAgent)
              const {data: requestsData} = await finAgent.post('/auth/login', data)
              const user = requestsData.user
              console.log(user)

@@ -1,4 +1,4 @@
-const baseUrl =  "https://backfinancial.burux.ir" //process.env.VUE_APP_BACKEND_URL
+const baseUrl =  "http://192.168.142.128:3000"//"https://letmeets.com" //process.env.VUE_APP_BACKEND_URL
 import axios from 'axios';
 export const finAgent = axios.create({
 

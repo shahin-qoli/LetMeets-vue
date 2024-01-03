@@ -59,7 +59,7 @@
        try{
        await this.$store.dispatch('userLogin', data)
       if(localStorage.getItem('token')){
-      this.$router.replace({name:'home'})
+      this.$router.replace({name:'main'})
    }
      }catch (error) {
         this.loginError = "نام کاربری یا رمز عبور اشتباه است.";
@@ -68,3 +68,4 @@
    },
  };
  </script>
+ 
