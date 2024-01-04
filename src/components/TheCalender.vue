@@ -1,39 +1,123 @@
 <template>
-    <v-dialog v-model="internalDialog">
-    <v-card>
+    <v-dialog fullscreen v-model="internalDialog">
         <v-row class="fill-height">
-            <v-col>
-            <v-sheet height="600">
-                <v-calendar
-                ref="calendar"
-                v-model="value"
-                color="primary"
-                type="4day"
-                :events="events"
-                :event-color="getEventColor"
-                :event-ripple="false"
-                @change="getEvents"
-                @mousedown:event="startDrag"
-                @mousedown:time="startTime"
-                @mousemove:time="mouseMove"
-                @mouseup:time="endDrag"
-                @mouseleave.native="cancelDrag"
-                >
-                <template v-slot:event="{ event, timed, eventSummary }">
-                    <div class="v-event-draggable">
-                    <component :is="{ render: eventSummary }"></component>
-                    </div>
-                    <div
-                    v-if="timed"
-                    class="v-event-drag-bottom"
-                    @mousedown.stop="extendBottom(event)"
-                    ></div>
-                </template>
-                </v-calendar>
-            </v-sheet>
+            <v-col> 
+                <v-sheet height="64">
+                    <v-toolbar
+                    flat
+                    >
+                    <v-btn
+                    outlined
+                    class="mr-4"
+                    color="grey darken-2"
+                    @click="setToday"
+                    >
+                    Today
+                    </v-btn>
+                    <v-btn
+                    fab
+                    text
+                    small
+                    color="grey darken-2"
+                    @click="prev"
+                    >
+                    <v-icon small>
+                    mdi-chevron-right
+                    </v-icon>
+                    </v-btn>
+                    <v-btn
+                    fab
+                    text
+                    small
+                    color="grey darken-2"
+                    @click="next"
+                    >
+                    <v-icon small>
+                    mdi-chevron-left
+                    </v-icon>
+                    </v-btn>
+                    <v-toolbar-title v-if="$refs.calendar">
+                    {{ $refs.calendar.title }}
+                    </v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="submitDate"
+                    
+                    outlined
+                    class="mr-4 align-center"
+                    color="green darken-2">ثبت</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-menu
+                    bottom
+                    right
+                    >
+                    <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                    outlined
+                    color="grey darken-2"
+                    v-bind="attrs"
+                    v-on="on"
+                    >
+                    <span>{{ typeToLabel[type] }}</span>
+                    <v-icon right>
+                    mdi-menu-down
+                    </v-icon>
+                    </v-btn>
+                    </template>
+                    <v-list>
+                    <v-list-item @click="type = 'day'">
+                    <v-list-item-title>Day</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="type = 'week'">
+                    <v-list-item-title>Week</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="type = 'month'">
+                    <v-list-item-title>Month</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="type = '4day'">
+                    <v-list-item-title>4 days</v-list-item-title>
+                    </v-list-item>
+                    </v-list>
+                    </v-menu>
+                    </v-toolbar>
+                </v-sheet>
+                <v-sheet height="600" class="mb10">                        
+                    <v-calendar
+                    style="height: 500 px; width: 500 px;"
+                    ref="calendar"
+                    v-model="value"
+                    color="primary"
+                    :type="type"
+                    :events="events"
+                    :event-color="getEventColor"
+                    :event-ripple="false"
+                    @change="getEvents"
+                    @mousedown:event="startDrag"
+                    @touchstart:event="startDrag"
+                    @mousedown:time="startTime"
+                    @touchstart:time="startTime"
+                    @mousemove:time="mouseMove"
+                    @touchmove:time="mouseMove"
+                    @mouseup:time="endDrag"
+                    @touchend:time="endDrag"
+                    @mouseleave.native="cancelDrag"
+            
+                    @click:more="viewDay"
+                    @click:date="viewDay"
+                    >
+                    <template v-slot:event="{ event, timed, eventSummary }">
+                        <div class="v-event-draggable">
+                        <component :is="{ render: eventSummary }"></component>
+                        </div>
+                        <div
+                        v-if="timed"
+                        class="v-event-drag-bottom"
+                        @mousedown.stop="extendBottom(event)"
+                        ></div>
+                    </template>
+                    </v-calendar>
+                </v-sheet>
             </v-col>
         </v-row>
-    </v-card>
     </v-dialog>
 </template>
 
@@ -57,9 +141,19 @@
       dragStart: null,
       createEvent: null,
       createStart: null,
-      extendOriginal: null,}
+      extendOriginal: null,
+      type: 'month',
+      typeToLabel: {
+        month: 'Month',
+        week: 'Week',
+        day: 'Day',
+        '4day': '4 Days',
+      },}
     },
     methods: {
+        submitDate(){
+            this.$emit('submitDate', this.events)
+        },
       startDrag ({ event, timed }) {
         if (event && timed) {
           this.dragEvent = event
@@ -163,11 +257,11 @@
       },
       getEvents ({ start, end }) {
         const events = []
-
+        
         const min = new Date(`${start.date}T00:00:00`).getTime()
         const max = new Date(`${end.date}T23:59:59`).getTime()
-        const days = (max - min) / 86400000
-        const eventCount = this.rnd(days, days + 20)
+        // const days = (max - min) / 86400000
+        const eventCount = 0
 
         for (let i = 0; i < eventCount; i++) {
           const timed = this.rnd(0, 3) !== 0
@@ -185,7 +279,7 @@
           })
         }
 
-        this.events = events
+        // this.events = events
       },
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
@@ -193,7 +287,31 @@
       rndElement (arr) {
         return arr[this.rnd(0, arr.length - 1)]
       },
+      viewDay ({ date }) {
+        this.value = date
+        this.type = 'day'
+      },
+      setToday () {
+        this.value = ''
+      },
+      prev () {
+        this.$refs.calendar.prev()
+      },
+      next () {
+        this.$refs.calendar.next()
+      },
     },
+    watch:{
+        dialog(newValue) {
+            this.internalDialog = newValue; // Update internal state when prop changes
+        },
+        internalDialog(newValue){
+            if (!newValue){
+                this.$emit('update:dialog', newValue);
+                //this.refreshData()
+            }
+        }
+    }
   }
 </script>
 

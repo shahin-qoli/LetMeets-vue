@@ -51,7 +51,7 @@
                         </v-row>
                         <v-row v-if="step==2">
                             <v-col cols="4">
-                                <v-btn @click="openCalender=true"></v-btn>
+                                <v-btn @click="tryOpenCalender"></v-btn>
                             </v-col>
                         </v-row>
                     </v-card-text>
@@ -90,12 +90,24 @@ export default{
             title: '',
             url: '',
             location: '',
-            suggestedTime: '',
+            suggestedTime: [],
             invitedEmails:[]},
             internalDialog: this.dialog,
             step:0
         }
     },methods:{
+        refreshData(){
+            this.invitedEmail='',
+            this.openCalender=false,
+            this.newMeeting={
+            title: '',
+            url: '',
+            location: '',
+            suggestedTime: [],
+            invitedEmails:[]},
+            this.internalDialog= this.dialog,
+            this.step=0
+        },
         submitNewMeeting(){
             //submit meeting creation logic
             this.$emit('submitMeeting',this.newMeeting)
@@ -119,14 +131,25 @@ export default{
             this.newMeeting.invitedEmails.push(this.invitedEmail)
             this.invitedEmail = ''
         },
-        handleSubmitDate(){
-
-        }
+        handleSubmitDate(events){
+            console.log(events)
+            this.newMeeting.suggestedTime= events
+            this.openCalender = false
+        },
+        tryOpenCalender(){
+            this.openCalender= true
+        },
     }
     ,
     watch:{
         dialog(newValue) {
             this.internalDialog = newValue; // Update internal state when prop changes
+        },
+        internalDialog(newValue){
+            if (!newValue){
+                this.$emit('update:dialog', newValue);
+                this.refreshData()
+            }
         }
     }
     }
