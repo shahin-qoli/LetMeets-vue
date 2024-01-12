@@ -1,9 +1,7 @@
 <template>
-    <v-app >
-       <v-main>
-          <v-container>
+          <v-container >
              <v-layout align-center justify-center>
-                <v-flex xs12 sm8 md4>
+                <v-flex >
                    <v-card class="elevation-12">
                       <v-toolbar dark color="primary">
                          <v-toolbar-title>ورود</v-toolbar-title>
@@ -36,8 +34,6 @@
                 </v-flex>
              </v-layout>
           </v-container>
-       </v-main>
-    </v-app>
  </template>
  
  <script>
@@ -68,4 +64,8 @@
    },
  };
  </script>
- 
+ <style scoped>
+ .fill-height {
+  height: 100%;
+}
+ </style>

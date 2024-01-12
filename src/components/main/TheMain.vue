@@ -28,37 +28,53 @@
 <script>
 // import CardsList from './CardsList.vue'
 import CreateMeeting from './CreateMeeting.vue'
+/**
+ * The default export contains the component definition for TheMain.
+ *
+ * It registers the CreateMeeting component and defines data, methods
+ * and computed properties.
+ *
+ * The data returns an object with the createMeetingDialoge property to
+ * track if the dialog is open.
+ *
+ * The methods allow opening and closing the dialog, and handle submitting
+ * the meeting data.
+ *
+ * The computed properties return mocked data for the meeting item lists.
+ */
 export default {
-components:{CreateMeeting},
-data(){
+  components: { CreateMeeting },
+  data() {
     return {
-        createMeetingDialoge: false,
-    }
-},
-methods:{
-    createMeeting(){
-        this.createMeetingDialoge = true
+      createMeetingDialoge: false,
+    };
+  },
+  methods: {
+    createMeeting() {
+      this.createMeetingDialoge = true;
     },
-    handleSubmitMeeting(meeting){
-        this.$store.dispatch('createMeeting', meeting).finally(this.createMeetingDialoge=false)
-    }
-},
-computed:{
-    fixedItems(){
-        return {
-            name: "some"
-        }
+    handleSubmitMeeting(meeting) {
+      this.$store
+        .dispatch("createMeeting", meeting)
+        .then(() => (this.createMeetingDialoge = false));
     },
-    ongoingItems(){
-        return{
-            name: "some"
-        }
+  },
+  computed: {
+    fixedItems() {
+      return {
+        name: "some",
+      };
     },
-    invitedItems(){
- return{
-    name:"some"
- }
-    }
-}
-}
+    ongoingItems() {
+      return {
+        name: "some",
+      };
+    },
+    invitedItems() {
+      return {
+        name: "some",
+      };
+    },
+  },
+};
 </script>

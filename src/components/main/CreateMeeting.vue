@@ -51,14 +51,15 @@
                         </v-row>
                         <v-row v-if="step==2">
                             <v-col cols="4">
-                                <v-btn @click="tryOpenCalender"></v-btn>
+                                <v-btn @click="tryOpenCalender">تقویم</v-btn>
                             </v-col>
                         </v-row>
                     </v-card-text>
                     <v-card-actions>
                         <v-row>
                             <v-col cols="12">
-                                <v-btn @click="nextStep" color="orange">بعد</v-btn>
+                                <v-btn v-if="step!=2" @click="nextStep" color="orange">بعد</v-btn>
+                                <v-btn v-if="step==2" @click="submitNewMeeting" color="green">ثبت</v-btn>
                             </v-col>
                         </v-row>
                     </v-card-actions>
@@ -91,11 +92,12 @@ export default{
             url: '',
             location: '',
             suggestedTime: [],
-            invitedEmails:[]},
+            invitedEmails:[],},
             internalDialog: this.dialog,
             step:0
         }
-    },methods:{
+    },
+    methods:{
         refreshData(){
             this.invitedEmail='',
             this.openCalender=false,
@@ -110,6 +112,7 @@ export default{
         },
         submitNewMeeting(){
             //submit meeting creation logic
+            this.newMeeting.userId= this.userId
             this.$emit('submitMeeting',this.newMeeting)
             this.$emit('update:dialog', false);
         },
@@ -150,6 +153,11 @@ export default{
                 this.$emit('update:dialog', newValue);
                 this.refreshData()
             }
+        }
+    },
+    computed:{
+        userId(){
+            return this.$store.getters.getUser.id
         }
     }
     }
